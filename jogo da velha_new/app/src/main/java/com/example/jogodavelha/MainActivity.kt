@@ -12,32 +12,35 @@ import com.example.jogodavelha.databinding.ActivityMainBinding
 import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding:ActivityMainBinding
+    // Declaração de uma variável para o binding da Activity
+    private lateinit var binding: ActivityMainBinding
 
-    //Vetor bidimensional que representará o tabuleiro de jogo
+    // Vetor bidimensional que representará o tabuleiro de jogo
     val tabuleiro = arrayOf(
         arrayOf("A", "B", "C"),
         arrayOf("D", "E", "F"),
         arrayOf("G", "H", "I")
     )
 
-    //Qual o Jogador está jogando
+    // Qual jogador está jogando ("X" ou "O")
     var jogadorAtual = "X"
 
+    // Método chamado ao criar a Activity
     override fun onCreate(savedInstanceState: Bundle?) {
-        binding = ActivityMainBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        // Inicializa o binding com a visualização inflada do layout
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        enableEdgeToEdge() // Configura a interface para usar o modo edge-to-edge
     }
 
-    //Função associada com todos os botões @param view é o botão clicado
+    // Função associada com todos os botões, onde 'view' é o botão clicado
     fun buttonClick(view: View) {
-        //O botão clicado é associado com uma constante
+        // O botão clicado é associado a uma constante
         val buttonSelecionado = view as Button
 
-        //De acordo com o botão clicado, a posição da matriz receberá o Jogador
-        when(buttonSelecionado.id){
+        // De acordo com o botão clicado, a posição da matriz receberá o Jogador atual
+        when(buttonSelecionado.id) {
             binding.buttonZero.id -> tabuleiro[0][0] = jogadorAtual
             binding.buttonUm.id -> tabuleiro[0][1] = jogadorAtual
             binding.buttonDois.id -> tabuleiro[0][2] = jogadorAtual
@@ -49,38 +52,42 @@ class MainActivity : AppCompatActivity() {
             binding.buttonOito.id -> tabuleiro[2][2] = jogadorAtual
         }
 
+        // Muda a aparência do botão clicado e o desabilita
         buttonSelecionado.setBackgroundResource(R.drawable.x)
-        buttonSelecionado.isEnabled=false
+        buttonSelecionado.isEnabled = false
 
-        //Recebe o jogador vencedor através da função verificaTabuleiro. @param tabuleito
+        // Verifica se há um vencedor após a jogada
         var vencedor = verificaVencedor(tabuleiro)
 
-        if(!vencedor.isNullOrBlank()) {
-            Toast.makeText(this, "Vencedor: " + vencedor, Toast.LENGTH_LONG).show()
+        // Se houver um vencedor, exibe uma mensagem e reinicia a Activity
+        if (!vencedor.isNullOrBlank()) {
+            Toast.makeText(this, "Vencedor: $vencedor", Toast.LENGTH_LONG).show()
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
+            return
         }
 
-        var rX = Random.nextInt(0, 3)
-        var rY = Random.nextInt(0, 3)
+        // Gera uma jogada aleatória para o "O"
+        var rX: Int
+        var rY: Int
         var i = 0
         while (i < 9) {
             rX = Random.nextInt(0, 3)
             rY = Random.nextInt(0, 3)
 
+            // Verifica se a posição está disponível
             if (tabuleiro[rX][rY] != "X" && tabuleiro[rX][rY] != "O") {
+                tabuleiro[rX][rY] = "O"
                 break
             }
 
             i++
         }
 
-        tabuleiro[rX][rY]="O"
-
-        val posicao = rX*3 + rY
-
-        when(posicao){
+        // Mapeia a posição aleatória para o botão correspondente e atualiza a aparência
+        val posicao = rX * 3 + rY
+        when (posicao) {
             0 -> {
                 binding.buttonZero.setBackgroundResource(R.drawable.o)
                 binding.buttonZero.isEnabled = false
@@ -119,25 +126,24 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // Verifica novamente se há um vencedor após a jogada do "O"
         vencedor = verificaVencedor(tabuleiro)
 
-        if(!vencedor.isNullOrBlank()) {
-            Toast.makeText(this, "Vencedor: " + vencedor, Toast.LENGTH_LONG).show()
+        if (!vencedor.isNullOrBlank()) {
+            Toast.makeText(this, "Vencedor: $vencedor", Toast.LENGTH_LONG).show()
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
         }
     }
 
+    // Função para verificar se há um vencedor no tabuleiro
     fun verificaVencedor(tabuleiro: Array<Array<String>>): String? {
-
         // Verifica linhas e colunas
         for (i in 0 until 3) {
-            //Verifica se há três itens iguais na linha
             if (tabuleiro[i][0] == tabuleiro[i][1] && tabuleiro[i][1] == tabuleiro[i][2]) {
                 return tabuleiro[i][0]
             }
-            //Verifica se há três itens iguais na coluna
             if (tabuleiro[0][i] == tabuleiro[1][i] && tabuleiro[1][i] == tabuleiro[2][i]) {
                 return tabuleiro[0][i]
             }
@@ -149,20 +155,19 @@ class MainActivity : AppCompatActivity() {
         if (tabuleiro[0][2] == tabuleiro[1][1] && tabuleiro[1][1] == tabuleiro[2][0]) {
             return tabuleiro[0][2]
         }
-        //Verifica a quantidade de jogadores 
+        // Verifica se há empate (todas as posições preenchidas sem vencedor)
         var empate = 0
         for (linha in tabuleiro) {
             for (valor in linha) {
-                if(valor.equals("X")||valor.equals("O")){
+                if (valor == "X" || valor == "O") {
                     empate++
                 }
             }
         }
-        //Se existem 9 jogadas e não há três letras iguais, houve um empate
-        if(empate == 9){
+        if (empate == 9) {
             return "Empate"
         }
-        // Nenhum vencedor
+        // Nenhum vencedor encontrado
         return null
     }
 }
