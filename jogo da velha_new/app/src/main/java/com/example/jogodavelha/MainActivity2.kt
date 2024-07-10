@@ -12,6 +12,7 @@ import com.example.jogodavelha.databinding.ActivityMainBinding
 import kotlin.random.Random
 
 class MainActivity2 : AppCompatActivity() {
+    // Declaração de uma variável para o binding da Activity
     private lateinit var binding: ActivityMainBinding
 
     // Vetor bidimensional que representará o tabuleiro de jogo
@@ -21,21 +22,23 @@ class MainActivity2 : AppCompatActivity() {
         arrayOf("", "", "")
     )
 
-    // Qual o jogador está jogando
+    // Qual jogador está jogando ("X" ou "O")
     var jogadorAtual = "X"
 
+    // Método chamado ao criar a Activity
     override fun onCreate(savedInstanceState: Bundle?) {
-        binding = ActivityMainBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
+        // Inicializa o binding com a visualização inflada do layout
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }
 
-    // Função associada com todos os botões @param view é o botão clicado
+    // Função associada com todos os botões, onde 'view' é o botão clicado
     fun buttonClick(view: View) {
-        // O botão clicado é associado com uma constante
+        // O botão clicado é associado a uma constante
         val buttonSelecionado = view as Button
 
-        // De acordo com o botão clicado, a posição da matriz receberá o jogador
+        // De acordo com o botão clicado, a posição receberá o jogador atual
         when (buttonSelecionado.id) {
             binding.buttonZero.id -> tabuleiro[0][0] = jogadorAtual
             binding.buttonUm.id -> tabuleiro[0][1] = jogadorAtual
@@ -48,15 +51,19 @@ class MainActivity2 : AppCompatActivity() {
             binding.buttonOito.id -> tabuleiro[2][2] = jogadorAtual
         }
 
+        // Muda a aparência do botão clicado e o desabilita
         buttonSelecionado.setBackgroundResource(R.drawable.x)
         buttonSelecionado.isEnabled = false
 
+        // Verifica se há um vencedor após a jogada
         var vencedor = verificaVencedor(tabuleiro)
         if (!vencedor.isNullOrBlank()) {
+            // Exibe uma mensagem de vencedor e reinicia a Activity
             Toast.makeText(this, "Vencedor: $vencedor", Toast.LENGTH_LONG).show()
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
+            return
         }
 
         // Movimento do computador usando algoritmo Minimax
@@ -66,8 +73,10 @@ class MainActivity2 : AppCompatActivity() {
             atualizarBotao(melhorMovimento.first, melhorMovimento.second)
         }
 
+        // Verifica novamente se há um vencedor após a jogada do "O"
         vencedor = verificaVencedor(tabuleiro)
         if (!vencedor.isNullOrBlank()) {
+            // Exibe uma mensagem de vencedor e reinicia a Activity
             Toast.makeText(this, "Vencedor: $vencedor", Toast.LENGTH_LONG).show()
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
@@ -75,6 +84,7 @@ class MainActivity2 : AppCompatActivity() {
         }
     }
 
+    // Função para atualizar a aparência do botão baseado na posição no tabuleiro
     fun atualizarBotao(x: Int, y: Int) {
         val posicao = x * 3 + y
         when (posicao) {
@@ -117,6 +127,7 @@ class MainActivity2 : AppCompatActivity() {
         }
     }
 
+    // Função para verificar se há um vencedor no tabuleiro
     fun verificaVencedor(tabuleiro: Array<Array<String>>): String? {
         // Verifica linhas e colunas
         for (i in 0 until 3) {
@@ -142,7 +153,7 @@ class MainActivity2 : AppCompatActivity() {
         return null
     }
 
-    // Função Minimax para encontrar o melhor movimento
+    // Função para encontrar o melhor movimento usando o algoritmo Minimax
     fun encontrarMelhorMovimento(tabuleiro: Array<Array<String>>): Pair<Int, Int> {
         var melhorVal = -1000
         var melhorMovimento = Pair(-1, -1)
@@ -164,11 +175,15 @@ class MainActivity2 : AppCompatActivity() {
         return melhorMovimento
     }
 
+    // Função Minimax para calcular o valor do movimento
     fun minimax(tabuleiro: Array<Array<String>>, profundidade: Int, isMax: Boolean): Int {
         val score = avaliar(tabuleiro)
 
+        // Se o jogador "O" vence
         if (score == 10) return score - profundidade
+        // Se o jogador "X" vence
         if (score == -10) return score + profundidade
+        // Se não há mais movimentos disponíveis
         if (tabuleiro.all { linha -> linha.all { it.isNotEmpty() } }) return 0
 
         if (isMax) {
@@ -200,6 +215,7 @@ class MainActivity2 : AppCompatActivity() {
         }
     }
 
+    // Função para avaliar o tabuleiro e retornar uma pontuação
     fun avaliar(tabuleiro: Array<Array<String>>): Int {
         for (i in 0 until 3) {
             if (tabuleiro[i][0] == tabuleiro[i][1] && tabuleiro[i][1] == tabuleiro[i][2]) {
