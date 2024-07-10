@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scaleType="centerCrop"
+    android:orientation="vertical"
+    android:background="@drawable/universo"
+    android:gravity="center"
+    tools:context=".Inicio">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="233dp"
+        android:gravity="center"
+        android:text="𝐃𝐈𝐅𝐈𝐂𝐔𝐋𝐃𝐀𝐃𝐄𝐒"
+        android:textColor="#ffffff"
+        android:textSize="50sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/nivel1"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_margin="5dp"
+            android:onClick="buttonClick"
+            android:text="Nível 1"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/nivel2"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:layout_margin="5dp"
+            android:onClick="buttonClick"
+            android:text="Nível 2"
+            android:textSize="20sp" />
+    </LinearLayout>
+</LinearLayout>
