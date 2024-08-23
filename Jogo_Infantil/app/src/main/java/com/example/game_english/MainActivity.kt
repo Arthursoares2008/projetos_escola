@@ -8,7 +8,10 @@ import android.graphics.Color
 
 class MainActivity : AppCompatActivity() {
 
+    // Variável de binding para acesso às views do layout.
     private lateinit var binding: ActivityMainBinding
+
+    // Mapeamento de cores em português para inglês.
     private val colorMap = mapOf(
         "Vermelho" to "Red",
         "Azul" to "Blue",
@@ -18,19 +21,22 @@ class MainActivity : AppCompatActivity() {
         "Branco" to "White"
     )
 
+    // Variáveis para a cor atual e a resposta correta.
     private lateinit var currentColorInPortuguese: String
     private lateinit var correctAnswer: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Inicializa o binding com o layout da atividade.
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupOptionButtons()
-        selectRandomColor()
+        setupOptionButtons() // Configura os botões de opção.
+        selectRandomColor()  // Seleciona uma cor aleatória ao iniciar.
     }
 
     private fun setupOptionButtons() {
+        // Configura listeners de clique para cada botão de opção para verificar a resposta.
         binding.btnOption1.setOnClickListener { checkAnswer(binding.btnOption1.text.toString()) }
         binding.btnOption2.setOnClickListener { checkAnswer(binding.btnOption2.text.toString()) }
         binding.btnOption3.setOnClickListener { checkAnswer(binding.btnOption3.text.toString()) }
@@ -38,14 +44,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun selectRandomColor() {
+        // Seleciona uma cor aleatória em português e obtém a tradução correta.
         val colors = colorMap.keys.toList()
         currentColorInPortuguese = colors[Random.nextInt(colors.size)]
         correctAnswer = colorMap[currentColorInPortuguese]!!
 
+        // Exibe a cor atual e limpa o resultado anterior.
         binding.tvColorInPortuguese.text = currentColorInPortuguese
         binding.tvResult.text = ""
 
-        // Gera opções de resposta, garantindo que uma delas é a correta
+        // Gera opções de resposta aleatórias, garantindo que uma delas seja a resposta correta.
         val options = mutableListOf(correctAnswer)
         while (options.size < 4) {
             val randomColorInEnglish = colorMap.values.random()
@@ -53,9 +61,9 @@ class MainActivity : AppCompatActivity() {
                 options.add(randomColorInEnglish)
             }
         }
-        options.shuffle()
+        options.shuffle() // Embaralha as opções para variar a ordem dos botões.
 
-        // Atribui as opções aos botões
+        // Define o texto dos botões com as opções geradas.
         binding.btnOption1.text = options[0]
         binding.btnOption2.text = options[1]
         binding.btnOption3.text = options[2]
@@ -63,17 +71,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkAnswer(selectedAnswer: String) {
+        // Verifica se a resposta selecionada é a correta e atualiza o texto do resultado.
         if (selectedAnswer == correctAnswer) {
             binding.tvResult.text = "Acertou! Você é uma criança muito esperta!"
-            binding.tvResult.setTextColor(Color.WHITE)
         } else {
             binding.tvResult.text = "Errado! A resposta certa é $correctAnswer."
-            binding.tvResult.setTextColor(Color.WHITE)
         }
+        binding.tvResult.setTextColor(Color.WHITE) // Define a cor do texto do resultado.
 
-        // Aguarda um breve momento antes de selecionar a próxima cor
+        // Aguarda 1,5 segundos antes de selecionar uma nova cor para jogar novamente.
         binding.tvResult.postDelayed({
             selectRandomColor()
-        }, 1500) // Aguarda 1,5 segundos antes de selecionar a próxima cor
+        }, 1500)
     }
 }
